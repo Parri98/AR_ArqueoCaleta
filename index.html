@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>Experiencia AR multi-marcador</title>
+
+        <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+        <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
+
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+                font-family: Arial, sans-serif;
+            }
+
+            .ar-info {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                z-index: 10;
+                padding: 10px 12px;
+                border-radius: 8px;
+                background: rgba(0, 0, 0, 0.55);
+                color: #fff;
+                font-size: 14px;
+                line-height: 1.35;
+                text-align: center;
+                pointer-events: none;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="ar-info">Apunta la camara a cualquiera de los marcadores.</div>
+
+        <a-scene
+            vr-mode-ui="enabled: false;"
+            loading-screen="enabled: false;"
+            renderer="logarithmicDepthBuffer: true;"
+            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+            id="scene"
+            embedded
+            gesture-detector
+        >
+            <a-assets timeout="60000">
+                <a-asset-item
+                    id="modelo-anforita"
+                    src="https://raw.githubusercontent.com/Parri98/AR_Anforita/main/assets/asset.glb"
+                ></a-asset-item>
+
+                <a-asset-item
+                    id="modelo-carronada"
+                    src="https://raw.githubusercontent.com/Parri98/AR_Carronada/main/assets/asset.glb"
+                ></a-asset-item>
+
+                <a-asset-item
+                    id="modelo-barco-romano"
+                    src="https://raw.githubusercontent.com/Parri98/AR_BarcoRomano/main/assets/asset.glb"
+                ></a-asset-item>
+
+                <a-asset-item
+                    id="modelo-cantera-caleta"
+                    src="https://raw.githubusercontent.com/Parri98/AR_CanteraCaleta/main/assets/asset.glb"
+                ></a-asset-item>
+            </a-assets>
+
+            <a-marker
+                id="marcador-anforita"
+                type="pattern"
+                preset="custom"
+                url="https://raw.githubusercontent.com/Parri98/AR_Anforita/main/assets/marker.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+            >
+                <a-entity
+                    id="modelo-marcador-anforita"
+                    scale="7.807289909997206 7.807289909997206 7.807289909997206"
+                    animation-mixer="loop: repeat"
+                    gltf-model="#modelo-anforita"
+                    class="clickable"
+                    gesture-handler
+                ></a-entity>
+            </a-marker>
+
+            <a-marker
+                id="marcador-carronada"
+                type="pattern"
+                preset="custom"
+                url="https://raw.githubusercontent.com/Parri98/AR_Carronada/main/assets/marker.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+            >
+                <a-entity
+                    id="modelo-marcador-carronada"
+                    scale="0.5514209146262659 0.5514209146262659 0.5514209146262659"
+                    animation-mixer="loop: repeat"
+                    gltf-model="#modelo-carronada"
+                    class="clickable"
+                    gesture-handler
+                ></a-entity>
+            </a-marker>
+
+            <a-marker
+                id="marcador-barco-romano"
+                type="pattern"
+                preset="custom"
+                url="https://raw.githubusercontent.com/Parri98/AR_BarcoRomano/main/assets/marker.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+            >
+                <a-entity
+                    id="modelo-marcador-barco-romano"
+                    scale="0.20077887168268388 0.20077887168268388 0.20077887168268388"
+                    animation-mixer="loop: repeat"
+                    gltf-model="#modelo-barco-romano"
+                    class="clickable"
+                    gesture-handler
+                ></a-entity>
+            </a-marker>
+
+            <a-marker
+                id="marcador-cantera-caleta"
+                type="pattern"
+                preset="custom"
+                url="https://raw.githubusercontent.com/Parri98/AR_CanteraCaleta/main/assets/marker.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+            >
+                <a-entity
+                    id="modelo-marcador-cantera-caleta"
+                    scale="0.13567004728855733 0.13567004728855733 0.13567004728855733"
+                    animation-mixer="loop: repeat"
+                    gltf-model="#modelo-cantera-caleta"
+                    class="clickable"
+                    gesture-handler
+                ></a-entity>
+            </a-marker>
+
+            <a-entity camera></a-entity>
+        </a-scene>
+    </body>
+</html>
