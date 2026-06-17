@@ -16,6 +16,7 @@
                 margin: 0;
                 overflow: hidden;
                 font-family: Arial, sans-serif;
+                background: #111;
             }
 
             .ar-info {
@@ -33,17 +34,91 @@
                 text-align: center;
                 pointer-events: none;
             }
+
+            .loading-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 20;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+                background: #111;
+                color: #fff;
+                text-align: center;
+                transition: opacity 0.35s ease, visibility 0.35s ease;
+            }
+
+            .loading-overlay.is-hidden {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+            .loading-panel {
+                width: min(420px, 100%);
+            }
+
+            .loading-title {
+                margin: 0 0 8px;
+                font-size: 22px;
+                font-weight: 700;
+            }
+
+            .loading-text {
+                margin: 0 0 18px;
+                color: rgba(255, 255, 255, 0.78);
+                font-size: 15px;
+                line-height: 1.45;
+            }
+
+            .loading-bar {
+                height: 4px;
+                overflow: hidden;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.18);
+            }
+
+            .loading-bar::before {
+                content: "";
+                display: block;
+                width: 42%;
+                height: 100%;
+                border-radius: inherit;
+                background: #fff;
+                animation: loading-line 1.1s ease-in-out infinite;
+            }
+
+            @keyframes loading-line {
+                0% {
+                    transform: translateX(-110%);
+                }
+
+                100% {
+                    transform: translateX(250%);
+                }
+            }
         </style>
     </head>
 
     <body>
-        <div class="ar-info">Apunta la camara a cualquiera de los marcadores.</div>
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-panel">
+                <h1 class="loading-title">Cargando experiencia AR</h1>
+                <p class="loading-text" id="loading-text">
+                    Permite el acceso a la camara y espera unos segundos mientras se preparan los modelos.
+                </p>
+                <div class="loading-bar" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <div class="ar-info" id="ar-info">Cuando se active la camara, apunta a cualquiera de los marcadores.</div>
 
         <a-scene
             vr-mode-ui="enabled: false;"
             loading-screen="enabled: false;"
             renderer="logarithmicDepthBuffer: true;"
-            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;"
             id="scene"
             embedded
             gesture-detector
@@ -148,5 +223,51 @@
 
             <a-entity camera></a-entity>
         </a-scene>
+
+        <script>
+            const scene = document.querySelector("#scene");
+            const loadingOverlay = document.querySelector("#loading-overlay");
+            const loadingText = document.querySelector("#loading-text");
+            const info = document.querySelector("#ar-info");
+            const markers = document.querySelectorAll("a-marker");
+
+            const loadingMessages = [
+                "Preparando la camara y los marcadores...",
+                "Cargando modelos 3D. Puede tardar unos segundos en el movil.",
+                "Cuando aparezca la camara, enfoca uno de los marcadores impresos."
+            ];
+
+            let messageIndex = 0;
+            const messageTimer = window.setInterval(() => {
+                messageIndex = (messageIndex + 1) % loadingMessages.length;
+                loadingText.textContent = loadingMessages[messageIndex];
+            }, 2500);
+
+            const hideLoading = () => {
+                window.clearInterval(messageTimer);
+                loadingOverlay.classList.add("is-hidden");
+                info.textContent = "Apunta la camara a cualquiera de los marcadores.";
+            };
+
+            scene.addEventListener("loaded", () => {
+                window.setTimeout(hideLoading, 900);
+            });
+
+            window.setTimeout(() => {
+                if (!loadingOverlay.classList.contains("is-hidden")) {
+                    hideLoading();
+                }
+            }, 12000);
+
+            markers.forEach((marker) => {
+                marker.addEventListener("markerFound", () => {
+                    info.textContent = "Marcador detectado. Puedes mover, rotar o acercar el modelo con los gestos.";
+                });
+
+                marker.addEventListener("markerLost", () => {
+                    info.textContent = "Marcador perdido. Vuelve a enfocar el marcador con buena luz.";
+                });
+            });
+        </script>
     </body>
 </html>
